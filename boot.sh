@@ -1,8 +1,8 @@
 #!/bin/sh
 # this script is used to boot a Docker container
-source venv/bin/activate
+source /home/new_user/Desktop/Flask_ss/venv
 # upgrade database
-while true; do
+while true do
     flask db upgrade
     if [[ "$?" == "0" ]]; then
         break
