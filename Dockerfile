@@ -4,7 +4,9 @@ RUN apk add --no-cache bash
 RUN apk add --upgrade qt5-qtbase
 RUN adduser -D flask_skipod
 
-WORKDIR /home/flask_skipod
+WORKDIR /home/flask_skipodrequirements.txt
+#WORKDIR /home/new_user/Desktop/Flask_ss/venv/bin
+RUN pip install gunicorn
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
@@ -16,7 +18,16 @@ COPY app app
 COPY architect architect
 COPY migrations migrations
 COPY logs logs
+#COPY userdata userdatall -r requirements.txt/
+RUN venv/bin/pip install gunicorn
+
+COPY app app
+COPY architect architect
+COPY migrations migrations
+COPY logs logs
 COPY userdata userdata
+COPY app.db app.db
+COPY flask_skipod.py c
 COPY app.db app.db
 COPY flask_skipod.py config.py Folders_create.py boot.sh ./
 
@@ -32,7 +43,7 @@ RUN chmod 777 config.py
 RUN chmod 777 boot.sh
 
 ENV FLASK_APP flask_skipod.py
-RUN chown -R flask_skipod:flask_skipod ./
+RUN #chown -R flask_skipod:flask_skipod ./
 USER flask_skipod
 
 EXPOSE 5000

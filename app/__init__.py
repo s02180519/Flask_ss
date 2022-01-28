@@ -37,6 +37,9 @@ def create_app(config_class=Config):
     from app.main import bluePrint as main_BP
     app_flask.register_blueprint(main_BP)
 
+    from app.admin import bluePrint as admin_BP
+    app_flask.register_blueprint(admin_BP)
+
     # Настройка регистратора электронной почты
     if not app_flask.debug:
         if app_flask.config['MAIL_SERVER']:

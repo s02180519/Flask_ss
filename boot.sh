@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # this script is used to boot a Docker container
-source /home/new_user/Desktop/Flask_ss/venv
+source venv/bin/activate
+#source /home/new_user/Desktop/Flask_ss/venv/bin/activate
 # upgrade database
-while true do
+while true; do
     flask db upgrade
     if [[ "$?" == "0" ]]; then
         break
@@ -13,4 +14,4 @@ done
 # create user folders
 python Folders_create.py
 # launch web server
-exec gunicorn -b :5000 --access-logfile - --error-logfile - flask_skipod:appFlask
+exec gunicorn -b :0 --access-logfile - --error-logfile - flask_skipod:appFlask

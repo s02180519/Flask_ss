@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user
 from app import dataBase
 from app.auth import bluePrint
 from app.auth.forms import LoginForm
+# from app.auth.forms import RegisterForm
 from app.models import User
 
 
@@ -36,4 +37,27 @@ def login_usr():
 def logout_usr():
     logout_user()
     return redirect(url_for('main.index'))
+
+# @bluePrint.route('/register', methods=['GET', 'POST'])
+# def register_usr():
+#     form = RegisterForm()
+#     # Отправили заполненную форму
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.username.data).first()
+#         if user is None:
+#             new_user = User(username=form.username.data, local_folder=form.username.data)
+#             new_user.set_password(form.password.data)
+#             dataBase.session.add(new_user)
+#             next_page = request.args.get('next')
+#             dataBase.session.commit()
+#             new_usrs = User.query.all()
+#             print(new_usrs)
+#             if not next_page or url_parse(next_page).netloc != '':
+#                 return redirect(url_for('auth.login_usr'))
+#             return redirect(next_page)
+#         else:
+#             flash('User login already exists')
+#             return redirect(url_for('auth.register_usr'))
+#     return render_template('auth/register.html', title='Регистрация', form=form)
+
 

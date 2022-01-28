@@ -57,6 +57,11 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Изменить данные', form=form)
 
+# @bluePrint.route('/admin', methods=['GET', 'POST'])
+# @login_required
+# def admin():
+#     return render_template('admin.html', title='Администрирование')
+
 
 @bluePrint.route('/upload_task', methods=['GET', 'POST'])
 @login_required
