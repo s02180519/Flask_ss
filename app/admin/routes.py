@@ -13,7 +13,7 @@ import string
 import os
 
 
-@bluePrint.route('/admin', methods=['GET', 'POST'])
+@bluePrint.route('/admin/register', methods=['GET', 'POST'])
 @login_required
 def admin():
     print(current_user.username)
