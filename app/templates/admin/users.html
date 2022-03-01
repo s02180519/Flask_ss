@@ -1,0 +1,19 @@
+{% extends "admin_base.html" %}
+
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/users.css') }}">
+{% endblock %}
+
+
+{% block app_content %}
+    {% block leftNavBar %}
+    {% endblock %}
+    <div class="row">
+                    <div class="table_row"><span><p>Login</p></span><span><p>Last Seen</p></span></div>
+                    {% for user in arUsers %}
+                        <div class="table_row"><span><p>{{ user.username }}</p></span><span><p>{{ user.last_seen }}</p></span></div>
+                    {% endfor %}
+    </div>
+{% endblock %}

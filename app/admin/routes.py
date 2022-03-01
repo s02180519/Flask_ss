@@ -11,12 +11,25 @@ import random
 from datetime import date
 import string
 import os
+from sqlalchemy import desc
+
+
+@bluePrint.route('/admin/users', methods=['GET', 'POST'])
+@login_required
+def users():
+    if current_user.username != 'ucmc2020ssRoot':
+        return render_template('errors/500.html')
+    # выбираем пользователей по дате последней авторизации (по убыванию)
+    arUsers = User.query.order_by(desc(User.last_seen))
+    # for user in arUsers:
+    # return render_template('admin/users.html', title='Пользователи', arUsers=arUsers, arUsersLen=len(arUsers))
+    return render_template('admin/users.html', title='Пользователи', arUsers=arUsers)
 
 
 @bluePrint.route('/admin/register', methods=['GET', 'POST'])
 @login_required
 def admin():
-    print(current_user.username)
+    # print(current_user.username)
     if current_user.username != 'ucmc2020ssRoot':
         return render_template('errors/500.html')
     # current_user = LocalProxy(lambda: _get_user())
@@ -54,31 +67,30 @@ def admin():
             arUsers.append({'login': usr_name, 'password': txt_pass})
 
         dataBase.session.commit()
-        next_page = request.args.get('next')
+        # next_page = request.args.get('next')
         return render_template('admin/register.html', title='Регистрация', form=form, arUsers=arUsers,
                                arUsersLen=len(arUsers))
     return render_template('admin/register.html', title='Регистрация', form=form, arUsers=[], arUsersLen=0)
     # return render_template('admin.html', title='Администрирование')
 
-
-@bluePrint.route('/register', methods=['GET', 'POST'])
-def register_usr():
-    form = RegisterForm()
-    # Отправили заполненную форму
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None:
-            new_user = User(username=form.username.data, local_folder=form.username.data)
-            new_user.set_password(form.password.data)
-            dataBase.session.add(new_user)
-            next_page = request.args.get('next')
-            dataBase.session.commit()
-            new_usrs = User.query.all()
-            print(new_usrs)
-            if not next_page or url_parse(next_page).netloc != '':
-                return redirect(url_for('auth.login_usr'))
-            return redirect(next_page)
-        else:
-            flash('User login already exists')
-            return redirect(url_for('admin.register_usr'))
-    return render_template('admin/register.html', title='Регистрация', form=form)
+# @bluePrint.route('/register', methods=['GET', 'POST'])
+# def register_usr():
+#     form = RegisterForm()
+#     # Отправили заполненную форму
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(username=form.username.data).first()
+#         if user is None:
+#             new_user = User(username=form.username.data, local_folder=form.username.data)
+#             new_user.set_password(form.password.data)
+#             dataBase.session.add(new_user)
+#             next_page = request.args.get('next')
+#             dataBase.session.commit()
+#             new_usrs = User.query.all()
+#             print(new_usrs)
+#             if not next_page or url_parse(next_page).netloc != '':
+#                 return redirect(url_for('auth.login_usr'))
+#             return redirect(next_page)
+#         else:
+#             flash('User login already exists')
+#             return redirect(url_for('admin.register_usr'))
+#     return render_template('admin/register.html', title='Регистрация', form=form)
