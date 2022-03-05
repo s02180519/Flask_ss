@@ -19,11 +19,25 @@ from sqlalchemy import desc
 def users():
     if current_user.username != 'ucmc2020ssRoot':
         return render_template('errors/500.html')
+    if request.method == 'GET':
+        print("DTBEOTGJEOBJOETBOETBKDIOJGJTGOETRGKETGJTOJGOTJHBO")
+        # data = request.get_json()
+        data = request.args.get('data', 0, type=string)
+        print(data)
     # выбираем пользователей по дате последней авторизации (по убыванию)
     arUsers = User.query.order_by(desc(User.last_seen))
     # for user in arUsers:
     # return render_template('admin/users.html', title='Пользователи', arUsers=arUsers, arUsersLen=len(arUsers))
     return render_template('admin/users.html', title='Пользователи', arUsers=arUsers)
+
+
+@bluePrint.route('/admin')
+@login_required
+def admin_forward():
+    if current_user.username != 'ucmc2020ssRoot':
+        return render_template('errors/500.html')
+    form = RegisterUsers()
+    return render_template('admin/register.html', title='Регистрация', form=form, arUsers=[], arUsersLen=0)
 
 
 @bluePrint.route('/admin/register', methods=['GET', 'POST'])

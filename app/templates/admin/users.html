@@ -3,7 +3,9 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/users.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/admin/users.css') }}">
+    <script src="{{ url_for('static',filename='js/admin/users.js') }}"></script>
+
 {% endblock %}
 
 
@@ -11,9 +13,21 @@
     {% block leftNavBar %}
     {% endblock %}
     <div class="row">
-                    <div class="table_row"><span><p>Login</p></span><span><p>Last Seen</p></span></div>
-                    {% for user in arUsers %}
-                        <div class="table_row"><span><p>{{ user.username }}</p></span><span><p>{{ user.last_seen }}</p></span></div>
-                    {% endfor %}
+        <div class="table_row">
+            <span class="select-input">
+                <input type="button" id="delete_users" style="display: none">
+                <label for="delete_users"><img src="{{ url_for('static', filename='images/delete.png') }}"></label>
+            </span>
+            <span><p>Login</p></span><span class="last-seen"><p>Last Seen</p></span>
+        </div>
+        {#        {% id = 0 %}#}
+        {% for user in arUsers %}
+            {#            {% id++ %}#}
+            <div class="table_row">
+                {#                <span>{{ id }}</span>#}
+                <span class="select-input content"><input type="checkbox"></span>
+                <span class="user-name"><p>{{ user.username }}</p></span><span class="last-seen"><p>{{ user.last_seen }}</p></span>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

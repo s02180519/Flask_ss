@@ -1,0 +1,52 @@
+.row span {
+    width: 30%;
+    display: inline-flex;
+    text-align: center;
+}
+
+.row .select-input {
+    width: 10%;
+}
+
+.row .last-seen {
+    width: 50%;
+}
+
+.row .select-input.content {
+    padding-left: 20px;
+}
+
+.row span p {
+    width: 100%;
+    margin: 2px 0;
+}
+
+.row .table_row {
+    /*left: 0px;*/
+    border-bottom: 1px solid;
+}
+
+.row {
+    left: 0px !important;
+}
+
+.table_row img {
+    width: 40px;
+    margin-left: 8px;
+}
+
+.table_row input {
+
+}
+
+.row {
+    border: 1px solid;
+    border-bottom: 0px;
+    position: absolute;
+    left: 30%;
+    width: 65%;
+}
+
+.row {
+    position: relative;
+}
