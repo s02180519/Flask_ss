@@ -1,3 +1,5 @@
+import json
+
 from app.admin import bluePrint
 from app.admin.forms import RegisterForm, RegisterUsers
 from app.models import User
@@ -19,11 +21,17 @@ from sqlalchemy import desc
 def users():
     if current_user.username != 'ucmc2020ssRoot':
         return render_template('errors/500.html')
-    if request.method == 'GET':
-        print("DTBEOTGJEOBJOETBOETBKDIOJGJTGOETRGKETGJTOJGOTJHBO")
-        # data = request.get_json()
-        data = request.args.get('data', 0, type=string)
-        print(data)
+    if request.method == 'POST':
+        data = request.get_json()
+        for userName in data['usersDelete']:
+            User.query.filter_by(username=userName).delete(synchronize_session=False)
+        dataBase.session.commit()
+        # data = {"some_key": "some_value"}  # Your data in JSON-serializable type
+        # response = app.response_class(response=json.dumps(data),
+        #                               status=200,
+        #                               mimetype='application/json')
+        # return response
+        return json.dumps({'status': 'OK'})
     # выбираем пользователей по дате последней авторизации (по убыванию)
     arUsers = User.query.order_by(desc(User.last_seen))
     # for user in arUsers:
