@@ -4,6 +4,58 @@
     text-align: center;
 }
 
+.edit-block {
+    position: absolute;
+    top: 0;
+    right: 150px;
+}
+
+.edit-block #select_by_mask:hover {
+    background-color: #e6e6e6;
+}
+
+.edit-block #select_by_mask {
+    border: 1px solid #adadad;
+    color: #333;
+    cursor: pointer;
+    width: 189px;
+    margin-top: 5px;
+    border-radius: 10px;
+    text-align: center;
+    padding: 0px 7px;
+}
+
+.table_row.table-header span.last-seen p {
+    width: 72%;
+}
+
+.table_row.table-header span p {
+    position: absolute !important;
+    top: 0;
+    width: 50%;
+}
+
+.edit-block label {
+    position: absolute;
+    left: 7px;
+    top: 50px;
+    color: #c7c2c2;
+}
+.edit-block #delete_users:hover {
+    background: #d1360c;
+}
+.edit-block #delete_users {
+    background: #F41;
+    width: 189px;
+    text-align: center;
+    border: 1px solid #000;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    color: #fff;
+    cursor: pointer;
+    /*background-image: url(/static/images/delete_simple_button2.png);*/
+}
+
 .row .select-input {
     width: 10%;
 }
@@ -36,7 +88,7 @@
 }
 
 .table_row input {
-
+    cursor: pointer;
 }
 
 .row {
