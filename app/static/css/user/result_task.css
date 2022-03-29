@@ -1,0 +1,17 @@
+#xml_code{
+    /*border: 1px solid;*/
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
+    background: #000;
+    color: #4cc73d;
+    padding: 20px;
+    width: 1200px;
+}
+#xml_code .teg{
+        color: #e9c619;
+}
+#xml_code .string_index{
+        color: #687067;
+}
