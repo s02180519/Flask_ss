@@ -1,15 +1,19 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block head  %}
-    {{super()}}
-    <link rel="stylesheet" type="text/css" href="_styles.css">
+{% block head %}
+    {{ super() }}
+    {#    <link rel="stylesheet" type="text/css" href="../static/css/_styles.css">#}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/_styles.css') }}">
+    <script src="{{ url_for('static',filename='js/jquery-1.11.1.min.js') }}"></script>
+
 {% endblock %}
 
 {% block navbar %}
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -20,7 +24,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     {% if not current_user.is_anonymous %}
-                        <li><a href="{{ url_for('main.user_page', username=current_user.username) }}">Мой профиль</a></li>
+                        <li><a href="{{ url_for('main.user_page', username=current_user.username) }}">Мой профиль</a>
+                        </li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
@@ -38,11 +43,11 @@
 {% block content %}
     <div class="container">
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
 
         {# application content needs to be provided in the app_content block #}

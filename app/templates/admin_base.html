@@ -2,7 +2,9 @@
 
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" type="text/css" href="_styles.css">
+    {#    <link rel="stylesheet" type="text/css" href="../static/css/_styles.css">#}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/_styles.css') }}">
+
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/base.css') }}">
     <script src="{{ url_for('static',filename='js/jquery-1.11.1.min.js') }}"></script>
 {% endblock %}
@@ -131,9 +133,9 @@
             <div>
                 <a href="/admin/register">Добавить новых участников</a>
             </div>
-{#            <div>#}
-{#                <a>Статистика</a>#}
-{#            </div>#}
+            {#            <div>#}
+            {#                <a>Статистика</a>#}
+            {#            </div>#}
             <div class="last-point">
                 <a href="/admin/users">Пользователи</a>
             </div>
