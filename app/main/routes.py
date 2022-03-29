@@ -17,7 +17,9 @@ def send_textures(username, path):
     # Определяем, в какой папке лежат данные для нашего пользователя
     cur_user = User.query.filter_by(username=username).first_or_404()
     cur_folder = os.path.abspath(os.path.curdir) + "/userdata/" + cur_user.local_folder + "/page"
-
+    # print("SIVNSIVNSIRIEFIWHFIHFIRIHFIRH")
+    # print(cur_folder)
+    # print(path)
     return send_from_directory(cur_folder, path)
 
 
@@ -29,14 +31,19 @@ def render_static(username):
     cur_dir = os.path.abspath(cur_dir)
     cur_dir = os.path.realpath(cur_dir)
     cur_folder = cur_dir + "/userdata/" + cur_user.local_folder + "/page"
+    # print("SIVNSIVNSIRIEFIWHFIHFIRIHFIRH")
+    # print(cur_folder)
     return send_from_directory(cur_folder, 'page.html')
 
 
 @bluePrint.route('/user/<username>/home_page')
 @login_required
 def user_page(username):
+    # print("DFBBBTRT")
+    # print(request.args.get('graph_name'))
+    graph_name = request.args.get('graph_name')
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', title='Моя страница', user=user)
+    return render_template('user.html', title='Моя страница', user=user, graph_name=graph_name)
 
 
 @bluePrint.route('/edit_profile', methods=['GET', 'POST'])
@@ -56,6 +63,7 @@ def edit_profile():
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Изменить данные', form=form)
+
 
 # @bluePrint.route('/admin', methods=['GET', 'POST'])
 # @login_required
@@ -110,7 +118,7 @@ def upload_task():
             os_command = graph_appgen_path + " " + "1" + " " + graph_config_file + " " + graph_output_dirs
             os.system(os_command)
         # Всё необходимое создано, возвращаемся на страницу пользователя
-        return redirect(url_for('main.user_page', username=current_user.username))
+        return redirect(url_for('main.user_page', username=current_user.username, graph_name=graph_name))
     return render_template('upload_task.html', title='Загрузка задания', form=form)
 
 
@@ -128,10 +136,16 @@ def receive_task():
         fd = os.open(cur_abs_path + usr_tsk_path + "/Task_code.txt", os.O_RDONLY)
         bytes_data = os.read(fd, 16384)
         form.task_code.data = bytes_data.decode('utf-8')
-
+        # Получаем xml-код пользователя
+        fd = os.open(cur_abs_path + usr_tsk_path + '/' + request.args.get('graph_name'), os.O_RDONLY)
+        bytes_data = os.read(fd, 16384)
+        xml_code = bytes_data.decode('utf-8')
     # Настройка пути к визуализационной странице и рендер всего ресурса
     frame_address = '/user/' + current_user.username + '/get_data'
-    return render_template('result_task.html', title='Результат', form=form, source=frame_address)
+    # frame_address = '/userdata/' + current_user.username + '/page'
+    # print("ILNINLDVGODRO")
+    # print(request.args.get('graph_name'))
+    return render_template('result_task.html', title='Результат', form=form, source=frame_address, xml_code=xml_code)
 
 
 @bluePrint.route('/')
