@@ -13,6 +13,7 @@ import random
 from datetime import date
 import string
 import os
+import shutil
 from sqlalchemy import desc
 
 
@@ -25,6 +26,11 @@ def users():
         data = request.get_json()
         for userName in data['usersDelete']:
             User.query.filter_by(username=userName).delete(synchronize_session=False)
+            usr_folder = 'userdata/' + userName
+            if os.path.exists(usr_folder):
+                # path = os.path.join(os.path.abspath(usr_folder), 'TestDir')
+                shutil.rmtree(usr_folder)
+                # os.rmtree(usr_folder)
         dataBase.session.commit()
         # data = {"some_key": "some_value"}  # Your data in JSON-serializable type
         # response = app.response_class(response=json.dumps(data),
@@ -39,6 +45,7 @@ def users():
     return render_template('admin/users.html', title='Пользователи', arUsers=arUsers)
 
 
+# переадресация на страницу регистрации новых пользователей
 @bluePrint.route('/admin')
 @login_required
 def admin_forward():
@@ -48,6 +55,7 @@ def admin_forward():
     return render_template('admin/register.html', title='Регистрация', form=form, arUsers=[], arUsersLen=0)
 
 
+# страница регистрации новых пользователей
 @bluePrint.route('/admin/register', methods=['GET', 'POST'])
 @login_required
 def admin():
