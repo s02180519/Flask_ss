@@ -17,16 +17,16 @@ $(document).ready(function () {
             closeTeg;
         if (elemText.indexOf(classStr) != -1) {
             elemText = elemText.substr(0, elemText.indexOf(classStr) - 3);
-            closeTeg = "></"+classStr+'>';
+            closeTeg = "></" + classStr + '>';
         } else {
             elemText = elemText.substr(0, elemText.indexOf('>'));
-            closeTeg='>';
+            closeTeg = '>';
         }
         console.log(elemText);
         // добавение нового элемента в блок кода
         let elem = $("<p><span class='string_index'>" + indx + "</span></p>");
         // elem.append(<span></span>)
-        if(classStr.length>0) {
+        if (classStr.length > 0) {
             elem.append($("<span class='teg' style='padding-left: " + (indxBegin * 40 + 20) + "px'></span>").text(openTeg));
             elem.append($("<span>" + elemText + "</span>"));
             elem.append($("<span class='teg'></span>").text(closeTeg));
@@ -34,8 +34,15 @@ $(document).ready(function () {
         $('#xml_code').append(elem);
 
     })
-    // $('#xml_code').append("<p></p>").text(str[0]);
-    // console.log(str);
-    // $('#xml_code').html($('#xml_code').text().replaceAll('\n','<br>'));
-    // console.log()
+
+    $('#xml_code-button').on('click', function () {
+        if ($('#xml_code').is(':hidden')) {
+            $('#xml_code').slideDown("slow");
+            $('img',this).css("transform", "rotate(180deg)");
+        }
+        else {
+            $('#xml_code').slideUp("slow");
+            $('img', this).css("transform", "rotate(0deg)");
+        }
+    });
 });

@@ -19,8 +19,14 @@
         </button>
     </div>
     <iframe id="frameId" src="{{ source }}" width="1200" height="800" scrolling="no" frameborder="1"></iframe>
-    <p id="xml_code">{{ xml_code }}
-    </p>
+    <div class="xml_code_block">
+        <span id="xml_code-button">
+            Показать код
+            <img src="{{ url_for('static',filename='images/wing.png') }}">
+        </span>
+        <p id="xml_code">{{ xml_code }}
+        </p>
+    </div>
     <div id="submit">
         <a href="{{ url_for('main.upload_task') }}">Загрузить другое задание</a>
     </div>
