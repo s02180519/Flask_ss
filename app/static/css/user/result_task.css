@@ -1,4 +1,4 @@
-#xml_code{
+#xml_code {
     /*border: 1px solid;*/
     border-width: 2px;
     border-style: inset;
@@ -8,10 +8,25 @@
     color: #4cc73d;
     padding: 20px;
     width: 1200px;
+    display: none;
 }
-#xml_code .teg{
-        color: #e9c619;
+
+#xml_code .teg {
+    color: #e9c619;
 }
-#xml_code .string_index{
-        color: #687067;
+
+#xml_code .string_index {
+    color: #687067;
+}
+
+#xml_code-button {
+    margin: 20px 0 0 50%;
+    display: flex;
+    border-bottom: 1px dashed;
+    width: max-content;
+}
+
+#xml_code-button img {
+    width: 25px;
+    margin-left: 6px;
 }
