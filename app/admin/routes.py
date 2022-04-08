@@ -2,7 +2,7 @@ import json
 
 from app.admin import bluePrint
 from app.admin.forms import RegisterForm, RegisterUsers
-from app.models import User
+from app.models import User, Group, Group_user
 from app import dataBase
 # from werkzeug.local import LocalProxy
 from flask import render_template, flash, redirect, url_for, request, url_for
@@ -17,10 +17,28 @@ import shutil
 from sqlalchemy import desc
 
 
+def checkGroup():
+    # current_user.username
+    # users = Group_user.query.join(User, User.id == Group_user.userid).filter(Group_user.groupid == 2)
+    # users = Group_user.query.select_from(User).join(Group_user, User.id == Group_user.userid).filter(User.username == current_user.username)
+    adminId = Group.query.filter(Group.groupname == 'admin').first()
+    user = Group_user.query.select_from(User).join(Group_user, User.id == Group_user.userid).filter(User.username == current_user.username).filter(Group_user.groupid == adminId.id).first()
+    if user is None:
+        return False
+    else:
+        return True
+    # if current_user.username != 'ucmc2020ssRoot':
+    #     return False
+    # else:
+    #     return True
+
+
 @bluePrint.route('/admin/users', methods=['GET', 'POST'])
 @login_required
 def users():
-    if current_user.username != 'ucmc2020ssRoot':
+    # if current_user.username != 'ucmc2020ssRoot':
+
+    if checkGroup() is False:
         return render_template('errors/500.html')
     if request.method == 'POST':
         data = request.get_json()
@@ -49,8 +67,11 @@ def users():
 @bluePrint.route('/admin')
 @login_required
 def admin_forward():
-    if current_user.username != 'ucmc2020ssRoot':
+    # if current_user.username != 'ucmc2020ssRoot':
+    #     return render_template('errors/500.html')
+    if checkGroup() is False:
         return render_template('errors/500.html')
+
     form = RegisterUsers()
     return render_template('admin/register.html', title='Регистрация', form=form, arUsers=[], arUsersLen=0)
 
@@ -60,7 +81,9 @@ def admin_forward():
 @login_required
 def admin():
     # print(current_user.username)
-    if current_user.username != 'ucmc2020ssRoot':
+    # if current_user.username != 'ucmc2020ssRoot':
+    #     return render_template('errors/500.html')
+    if checkGroup() is False:
         return render_template('errors/500.html')
     # current_user = LocalProxy(lambda: _get_user())
     form = RegisterUsers()
@@ -102,25 +125,3 @@ def admin():
                                arUsersLen=len(arUsers))
     return render_template('admin/register.html', title='Регистрация', form=form, arUsers=[], arUsersLen=0)
     # return render_template('admin.html', title='Администрирование')
-
-# @bluePrint.route('/register', methods=['GET', 'POST'])
-# def register_usr():
-#     form = RegisterForm()
-#     # Отправили заполненную форму
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(username=form.username.data).first()
-#         if user is None:
-#             new_user = User(username=form.username.data, local_folder=form.username.data)
-#             new_user.set_password(form.password.data)
-#             dataBase.session.add(new_user)
-#             next_page = request.args.get('next')
-#             dataBase.session.commit()
-#             new_usrs = User.query.all()
-#             print(new_usrs)
-#             if not next_page or url_parse(next_page).netloc != '':
-#                 return redirect(url_for('auth.login_usr'))
-#             return redirect(next_page)
-#         else:
-#             flash('User login already exists')
-#             return redirect(url_for('admin.register_usr'))
-#     return render_template('admin/register.html', title='Регистрация', form=form)

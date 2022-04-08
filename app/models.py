@@ -5,6 +5,22 @@ from app import dataBase
 from app import login
 
 
+class Group(UserMixin, dataBase.Model):
+    id = dataBase.Column(dataBase.Integer, primary_key=True)
+    groupname = dataBase.Column(dataBase.String(64), index=True, unique=True)
+
+    def __repr__(self):
+        return '<Group {}>'.format(self.groupname)
+
+class Group_user(UserMixin, dataBase.Model):
+    id = dataBase.Column(dataBase.Integer, primary_key=True)
+    groupid = dataBase.Column(dataBase.Integer, dataBase.ForeignKey('group.id'))
+    userid = dataBase.Column(dataBase.Integer, dataBase.ForeignKey('user.id'))
+
+    # def __repr__(self):
+    #     return '<Group_user {}>'.format(self.groupname)
+
+
 class User(UserMixin, dataBase.Model):
     id = dataBase.Column(dataBase.Integer, primary_key=True)
     username = dataBase.Column(dataBase.String(64), index=True, unique=True)
