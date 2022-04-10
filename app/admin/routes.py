@@ -22,7 +22,8 @@ def checkGroup():
     # users = Group_user.query.join(User, User.id == Group_user.userid).filter(Group_user.groupid == 2)
     # users = Group_user.query.select_from(User).join(Group_user, User.id == Group_user.userid).filter(User.username == current_user.username)
     adminId = Group.query.filter(Group.groupname == 'admin').first()
-    user = Group_user.query.select_from(User).join(Group_user, User.id == Group_user.userid).filter(User.username == current_user.username).filter(Group_user.groupid == adminId.id).first()
+    user = Group_user.query.select_from(User).join(Group_user, User.id == Group_user.userid).filter(
+        User.username == current_user.username).filter(Group_user.groupid == adminId.id).first()
     if user is None:
         return False
     else:
@@ -31,6 +32,58 @@ def checkGroup():
     #     return False
     # else:
     #     return True
+
+
+@bluePrint.route('/admin/groups_edit', methods=['GET', 'POST'])
+@login_required
+def groups_edit():
+    if checkGroup() is False:
+        return render_template('errors/500.html')
+    if request.method == 'POST':
+        data = request.get_json()
+        if data['method'] == 'add_group':
+            group = Group.query.filter_by(
+                groupname=data['newGroup']).first()
+            if group is None:
+                new_group = Group(groupname=data['newGroup'])
+                dataBase.session.add(new_group)
+        elif data['method'] == 'add_user':
+            group = Group.query.filter_by(
+                groupname=data['groupName']).first()
+            user = User.query.filter_by(username=data['newUser']).first()
+            if group is not None:
+                new_group_user = Group_user(groupid=group.id, userid=user.id)
+                dataBase.session.add(new_group_user)
+        elif data['method'] == 'delete_users':
+            group = Group.query.filter_by(groupname=data['groupName']).first()
+            for userName in data['usersDelete']:
+                user = User.query.filter_by(username=userName).first()
+                group_user = Group_user.query.filter_by(groupid=group.id,userid=user.id).delete(synchronize_session=False)
+                # user = User.query.filter_by(username=userName).delete(synchronize_session=False)
+        dataBase.session.commit()
+        return json.dumps({'status': 'OK'})
+    arResult = {}
+
+    # все пользователи
+    arUsers = User.query.order_by(desc(User.last_seen))
+    arResult['users_list'] = []
+    for user in arUsers:
+        arResult['users_list'].append(user.username)
+
+    # пользователи по группам
+    arGroups = Group.query.order_by(Group.id)
+    # arResult['groups'] = {}
+    arResult['groups'] = []
+    for group in arGroups:
+        newGroup = {}
+        newGroup['name'] = group.groupname
+        newGroup['users'] = []
+        arGroupUser = Group_user.query.filter(Group_user.groupid == group.id)
+        for groupUser in arGroupUser:
+            user = User.query.filter(User.id == groupUser.userid).first()
+            newGroup['users'].append(user.username)
+        arResult['groups'].append(newGroup)
+    return render_template('admin/groups_edit.html', title='Управление группами пользователей', arResult=arResult)
 
 
 @bluePrint.route('/admin/users', methods=['GET', 'POST'])
@@ -46,20 +99,11 @@ def users():
             User.query.filter_by(username=userName).delete(synchronize_session=False)
             usr_folder = 'userdata/' + userName
             if os.path.exists(usr_folder):
-                # path = os.path.join(os.path.abspath(usr_folder), 'TestDir')
                 shutil.rmtree(usr_folder)
-                # os.rmtree(usr_folder)
         dataBase.session.commit()
-        # data = {"some_key": "some_value"}  # Your data in JSON-serializable type
-        # response = app.response_class(response=json.dumps(data),
-        #                               status=200,
-        #                               mimetype='application/json')
-        # return response
         return json.dumps({'status': 'OK'})
     # выбираем пользователей по дате последней авторизации (по убыванию)
     arUsers = User.query.order_by(desc(User.last_seen))
-    # for user in arUsers:
-    # return render_template('admin/users.html', title='Пользователи', arUsers=arUsers, arUsersLen=len(arUsers))
     return render_template('admin/users.html', title='Пользователи', arUsers=arUsers)
 
 

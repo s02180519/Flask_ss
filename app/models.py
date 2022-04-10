@@ -17,8 +17,8 @@ class Group_user(UserMixin, dataBase.Model):
     groupid = dataBase.Column(dataBase.Integer, dataBase.ForeignKey('group.id'))
     userid = dataBase.Column(dataBase.Integer, dataBase.ForeignKey('user.id'))
 
-    # def __repr__(self):
-    #     return '<Group_user {}>'.format(self.groupname)
+    def __repr__(self):
+        return '<Group_user {}>'.format(self.groupname)
 
 
 class User(UserMixin, dataBase.Model):

@@ -5,7 +5,7 @@
 .admin-navbar {
     position: fixed;
     height: auto;
-    width: 236px;
+    width: 270px;
     background-color: #f8f8f8;
     border: 2px solid #e7e7e7;
 }
@@ -16,11 +16,17 @@
     padding: 10px 5px 5px 0px;
     border-bottom: 1px solid #e7e7e7;
 }
+
 .admin-navbar div.last-point {
     border: 0px;
 }
+
 .main-content {
     display: inline-flex;
+}
+
+.container {
+    left: 280px !important;
 }
 
 .main-content .container {
