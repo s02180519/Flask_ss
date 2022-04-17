@@ -26,6 +26,8 @@
                     {% if not current_user.is_anonymous %}
                         <li><a href="{{ url_for('main.user_page', username=current_user.username) }}">Мой профиль</a>
                         </li>
+                        <li><a href="{{ url_for('main.upload_report') }}">Мои отчеты</a>
+                        </li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

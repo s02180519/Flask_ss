@@ -4,6 +4,13 @@ from datetime import datetime
 from app import dataBase
 from app import login
 
+class Report(UserMixin, dataBase.Model):
+    id = dataBase.Column(dataBase.Integer, primary_key=True)
+    user_id = dataBase.Column(dataBase.Integer, dataBase.ForeignKey('user.id'))
+    report_name = dataBase.Column(dataBase.String(100))
+    mark = dataBase.Column(dataBase.Integer)
+    date_creation = dataBase.Column(dataBase.DateTime, default=datetime.utcnow())
+    comment = dataBase.Column(dataBase.String(300))
 
 class Group(UserMixin, dataBase.Model):
     id = dataBase.Column(dataBase.Integer, primary_key=True)

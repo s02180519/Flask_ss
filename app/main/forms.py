@@ -26,7 +26,8 @@ class EditProfileForm(FlaskForm):
 
 class TaskSubmitForm(FlaskForm):
     task_code = TextAreaField('Комментарий к заданию', validators=[Length(min=0, max=16384)])
-    file_data = FileField('Загрузить описание графа', validators=[FileRequired(), FileAllowed(['xml'], 'Только XML-описания!')])
+    file_data = FileField('Загрузить описание графа',
+                          validators=[FileRequired(), FileAllowed(['xml'], 'Только XML-описания!')])
     submit = SubmitField('Сгенерировать')
 
     def __init__(self, *args, **kwargs):
@@ -39,3 +40,12 @@ class TaskReceiveForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(TaskReceiveForm, self).__init__(*args, **kwargs)
         # Проинициализировать здесь результирующие данные
+
+
+class ReportSubmitForm(FlaskForm):
+    file_data = FileField('Загрузить новый отчет',
+                          validators=[FileRequired(), FileAllowed(['docx','doc','pdf'], 'Только документы срасширением .docx!')])
+    submit = SubmitField('Отправить')
+
+    def __init__(self, *args, **kwargs):
+        super(ReportSubmitForm, self).__init__(*args, **kwargs)

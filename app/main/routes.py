@@ -6,9 +6,12 @@ from app import dataBase
 from app.main import bluePrint
 from app.main.forms import EditProfileForm
 from app.main.forms import TaskSubmitForm
+from app.main.forms import ReportSubmitForm
 from app.main.forms import TaskReceiveForm
-from app.models import User
+from app.models import User, Report
 import os
+from flask import send_from_directory
+from os import path
 
 
 # Пути к ресурсным файлам юзверя
@@ -31,19 +34,61 @@ def render_static(username):
     cur_dir = os.path.abspath(cur_dir)
     cur_dir = os.path.realpath(cur_dir)
     cur_folder = cur_dir + "/userdata/" + cur_user.local_folder + "/page"
-    # print("SIVNSIVNSIRIEFIWHFIHFIRIHFIRH")
-    # print(cur_folder)
     return send_from_directory(cur_folder, 'page.html')
 
 
 @bluePrint.route('/user/<username>/home_page')
 @login_required
 def user_page(username):
-    # print("DFBBBTRT")
-    # print(request.args.get('graph_name'))
     graph_name = request.args.get('graph_name')
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', title='Моя страница', user=user, graph_name=graph_name)
+
+
+@bluePrint.route('/upload_report/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    cur_abs_path = os.path.abspath(os.path.curdir)
+    usr_report_path = "/userdata/" + current_user.local_folder + "/reports"
+    return send_from_directory(directory=cur_abs_path+usr_report_path, path=filename)
+
+
+@bluePrint.route('/upload_report', methods=['GET', 'POST'])
+@login_required
+def upload_report():
+    form = ReportSubmitForm()
+    if form.validate_on_submit():
+        # Определим вспомогательные переменные
+        print("RFIRFIF")
+        cur_abs_path = os.path.abspath(os.path.curdir)
+        usr_report_path = "/userdata/" + current_user.local_folder + "/reports"
+        # Нужно создать локальную директорию для хранения данных по адресу, который выдан этому юзверю (если таковой есть)
+        if not os.path.exists(cur_abs_path + usr_report_path):
+            os.makedirs(cur_abs_path + usr_report_path, mode=0x777, exist_ok=True)
+        # Нужно записать в эту директорию загнанные данные.
+        if os.path.exists(cur_abs_path + usr_report_path):
+            report_name = form.file_data.data.filename
+            if os.path.exists(cur_abs_path + usr_report_path + "/" + report_name):
+                os.remove(os.path.join(cur_abs_path + usr_report_path + "/", report_name))
+                if not os.path.exists(cur_abs_path + usr_report_path + "/" + report_name):
+                    report = Report.query.filter_by(user_id=current_user.id, report_name=report_name).delete(
+                        synchronize_session=False)
+            form.file_data.data.save(cur_abs_path + usr_report_path + "/" + report_name)
+            if os.path.exists(cur_abs_path + usr_report_path + "/" + report_name):
+                new_report = Report(report_name=report_name, user_id=current_user.id, date_creation=datetime.utcnow())
+                dataBase.session.add(new_report)
+        dataBase.session.commit()
+        # Всё необходимое создано, возвращаемся на страницу пользователя
+        return redirect(url_for('main.upload_report'))
+    reports_query = Report.query.filter_by(user_id=current_user.id)
+    arReports = []
+    for report in reports_query:
+        arReports.append({
+            'report_name': report.report_name,
+            'data_creation': str(report.date_creation).partition('.')[0],
+            'mark': report.mark,
+            'comment': report.comment
+        })
+    return render_template('reports.html', title='Мои отчеты', form=form, reports=arReports)
 
 
 @bluePrint.route('/edit_profile', methods=['GET', 'POST'])

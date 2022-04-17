@@ -2,10 +2,10 @@ import json
 
 from app.admin import bluePrint
 from app.admin.forms import RegisterForm, RegisterUsers
-from app.models import User, Group, Group_user
+from app.models import User, Group, Group_user, Report
 from app import dataBase
 # from werkzeug.local import LocalProxy
-from flask import render_template, flash, redirect, url_for, request, url_for
+from flask import render_template, flash, redirect, url_for, request, url_for, send_from_directory
 from werkzeug.urls import url_parse
 from flask_login import current_user, login_required
 from distutils.dir_util import copy_tree
@@ -15,6 +15,8 @@ import string
 import os
 import shutil
 from sqlalchemy import desc
+from flask import send_from_directory
+from os import path
 
 
 def checkGroup():
@@ -32,6 +34,60 @@ def checkGroup():
     #     return False
     # else:
     #     return True
+
+
+@bluePrint.route('/admin/reports/<path:filename>', methods=['GET', 'POST'])
+@login_required
+def download(filename):
+    if checkGroup() is False:
+        return render_template('errors/500.html')
+    data = request.args.get('user')
+    cur_abs_path = os.path.abspath(os.path.curdir)
+    user_folder = User.query.filter_by(username=data).first().local_folder
+    usr_report_path = "/userdata/" + user_folder + "/reports"
+    return send_from_directory(directory=cur_abs_path + usr_report_path, path=filename)
+
+
+@bluePrint.route('/admin/reports', methods=['GET', 'POST'])
+@login_required
+def reports_edit():
+    if checkGroup() is False:
+        return render_template('errors/500.html')
+    if request.method == 'POST':
+        data = request.get_json()
+        if data['method'] == 'delete_reports':
+            for report in data['reportsDelete']:
+                userId = User.query.filter_by(username=report['user']).first().id
+                cur_abs_path = os.path.abspath(os.path.curdir)
+                user_folder = User.query.filter_by(username=report['user']).first().local_folder
+                usr_report_path = "/userdata/" + user_folder + "/reports/"
+                report_path = cur_abs_path + usr_report_path + report['report']
+                if os.path.exists(report_path):
+                    os.remove(report_path)
+                if not os.path.exists(report_path):
+                    Report.query.filter_by(user_id=userId, report_name=report['report']).delete(
+                        synchronize_session=False)
+        if data['method'] == 'edit_mark':
+            userId = User.query.filter_by(username=data['user']).first().id
+            report = Report.query.filter_by(user_id=userId, report_name=data['report']).first()
+            report.mark=data['mark']
+        if data['method'] == 'edit_comment':
+            userId = User.query.filter_by(username=data['user']).first().id
+            report = Report.query.filter_by(user_id=userId, report_name=data['report']).first()
+            report.comment=data['comment']
+        dataBase.session.commit()
+        return json.dumps({'status': 'OK'})
+    reports_query = Report.query.order_by(Report.date_creation)
+    arReports = []
+    for report in reports_query:
+        arReports.append({
+            'report_name': report.report_name,
+            'user': User.query.filter_by(id=report.user_id).first().username,
+            'data_creation': str(report.date_creation).partition('.')[0],
+            'mark': report.mark,
+            'comment': report.comment
+        })
+    return render_template('admin/reports.html', title='Отчеты', reports=arReports)
 
 
 @bluePrint.route('/admin/groups_edit', methods=['GET', 'POST'])
@@ -58,7 +114,8 @@ def groups_edit():
             group = Group.query.filter_by(groupname=data['groupName']).first()
             for userName in data['usersDelete']:
                 user = User.query.filter_by(username=userName).first()
-                group_user = Group_user.query.filter_by(groupid=group.id,userid=user.id).delete(synchronize_session=False)
+                group_user = Group_user.query.filter_by(groupid=group.id, userid=user.id).delete(
+                    synchronize_session=False)
                 # user = User.query.filter_by(username=userName).delete(synchronize_session=False)
         dataBase.session.commit()
         return json.dumps({'status': 'OK'})
