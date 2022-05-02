@@ -49,7 +49,7 @@ def user_page(username):
 def download(filename):
     cur_abs_path = os.path.abspath(os.path.curdir)
     usr_report_path = "/userdata/" + current_user.local_folder + "/reports"
-    return send_from_directory(directory=cur_abs_path+usr_report_path, path=filename)
+    return send_from_directory(directory=cur_abs_path+usr_report_path, filename=filename)
 
 
 @bluePrint.route('/upload_report', methods=['GET', 'POST'])

@@ -30,10 +30,6 @@ def checkGroup():
         return False
     else:
         return True
-    # if current_user.username != 'ucmc2020ssRoot':
-    #     return False
-    # else:
-    #     return True
 
 
 @bluePrint.route('/admin/reports/<path:filename>', methods=['GET', 'POST'])
@@ -45,7 +41,8 @@ def download(filename):
     cur_abs_path = os.path.abspath(os.path.curdir)
     user_folder = User.query.filter_by(username=data).first().local_folder
     usr_report_path = "/userdata/" + user_folder + "/reports"
-    return send_from_directory(directory=cur_abs_path + usr_report_path, path=filename)
+    dir = cur_abs_path + usr_report_path
+    return send_from_directory(directory=dir, filename=filename, as_attachment=True)
 
 
 @bluePrint.route('/admin/reports', methods=['GET', 'POST'])
